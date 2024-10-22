@@ -72,7 +72,8 @@ const StyledApp = styled.div`
 `
 
 const StyledFilter = styled.div`
-  display: flex
+  display: flex;
+  margin-bottom: 20px;
 `
 
 const StyledFilterItem = styled.div``
