@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled from "styled-components";
 import {Item} from "./components/item/Item";
 import {v1} from "uuid";
+import {Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select} from "@mui/material";
 
 export type ItemType = {
     id: string
@@ -64,6 +65,18 @@ function App() {
         },
     ])
 
+    const [currentColors, setCurrentColors] = useState<string[]>([])
+
+    const colors = ["white", "black", "grey", "brown", "blue", "red", "green", "yellow"]
+
+    let filteredByColors = items
+
+    const handleChange = (event: any) => {
+        setCurrentColors(event.target.value)
+    };
+
+    if(currentColors.length > 0) filteredByColors = items.filter(item => currentColors.includes(item.color))
+
     return (
         <StyledApp>
             <StyledFilter>
@@ -79,11 +92,29 @@ function App() {
                         <option value="green">Зеленый</option>
                     </select>
                 </StyledFilterItem>
-
+                <FormControl sx={{m: 1, width: 300}}>
+                    <InputLabel>Tag</InputLabel>
+                    <Select
+                        labelId="demo-multiple-checkbox-label"
+                        id="demo-multiple-checkbox"
+                        multiple
+                        value={currentColors}
+                        onChange={handleChange}
+                        input={<OutlinedInput label="Tag"/>}
+                        renderValue={(selected) => selected.join(', ')}
+                    >
+                        {colors.map((color) => (
+                            <MenuItem key={color} value={color}>
+                                <Checkbox checked={currentColors.indexOf(color) > -1}/>
+                                <ListItemText primary={color}/>
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </StyledFilter>
             <ItemsBlock>
-                {items.map(item => <Item key={item.id} title={item.title} color={item.color} size={item.size}
-                                         price={item.price} description={item.description}/>)}
+                {filteredByColors.map(item => <Item key={item.id} title={item.title} color={item.color} size={item.size}
+                                                    price={item.price} description={item.description}/>)}
             </ItemsBlock>
         </StyledApp>
     );
