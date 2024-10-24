@@ -1,11 +1,20 @@
 import React from 'react';
 import styled from "styled-components";
 
-export const Item = () => {
+type ItemPropsType = {
+    title: string
+    color: string
+    description: string
+    price: number
+    size: number
+}
+
+export const Item: React.FC<ItemPropsType> = (props) => {
     return (
         <StyledItem>
-            <StyledName>Item</StyledName>
-            <StyledDescription>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</StyledDescription>
+            <StyledName>{props.title}</StyledName>
+            <StyledDescription>{props.description}</StyledDescription>
+            <StyledColor color={props.color}></StyledColor>
         </StyledItem>
     );
 };
@@ -19,10 +28,21 @@ const StyledItem = styled.div`
   background-color: #353535;
   color: white;
   padding: 20px;
+  position: relative;
 `
 
 const StyledName = styled.h2``
 
 const StyledDescription = styled.p`
   margin-top: 10px;
+`
+
+const StyledColor = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 15px;
+  height: 15px;
+  border-radius: 5px;
+  background-color: ${props => props.color || 'white'};
 `
