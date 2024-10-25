@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import styled from "styled-components";
 import {Item} from "./components/item/Item";
 import {v1} from "uuid";
@@ -67,31 +67,36 @@ function App() {
 
     const [currentColors, setCurrentColors] = useState<string[]>([])
 
-    const colors = ["white", "black", "grey", "brown", "blue", "red", "green", "yellow"]
+    const [minPrice, setMinPrice] = useState<number>()
 
-    let filteredByColors = items
+    const [maxPrice, setMaxPrice] = useState<number>()
+
+    if (minPrice === 0) setMinPrice(undefined)
+
+    if (maxPrice === 0) setMaxPrice(undefined)
+
+    let filteredItems = items
+
+    const onMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setMinPrice(Number(event.currentTarget.value))
+        if (minPrice) setItems(filteredItems.filter(item => item.price > minPrice))
+    }
+
+    const onMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setMaxPrice(Number(event.currentTarget.value))
+    }
+
+    const colors = ["white", "black", "grey", "brown", "blue", "red", "green", "yellow"]
 
     const handleChange = (event: any) => {
         setCurrentColors(event.target.value)
     };
 
-    if(currentColors.length > 0) filteredByColors = items.filter(item => currentColors.includes(item.color))
+    if (currentColors.length > 0) filteredItems = items.filter(item => currentColors.includes(item.color))
 
     return (
         <StyledApp>
             <StyledFilter>
-                <StyledFilterItem>
-                    <select>
-                        <option value="any">Все цвета</option>
-                        <option value="white">Белый</option>
-                        <option value="black">Черный</option>
-                        <option value="grey">Серый</option>
-                        <option value="brown">Коричневый</option>
-                        <option value="blue">Синий</option>
-                        <option value="red">Красный</option>
-                        <option value="green">Зеленый</option>
-                    </select>
-                </StyledFilterItem>
                 <FormControl sx={{m: 1, width: 300}}>
                     <InputLabel>Tag</InputLabel>
                     <Select
@@ -111,9 +116,12 @@ function App() {
                         ))}
                     </Select>
                 </FormControl>
+                <p>Цена:</p>
+                <StyledInput placeholder={'От:'} value={minPrice} onChange={onMinPriceChange}/>
+                <StyledInput placeholder={'До:'} value={maxPrice} onChange={onMaxPriceChange}/>
             </StyledFilter>
             <ItemsBlock>
-                {filteredByColors.map(item => <Item key={item.id} title={item.title} color={item.color} size={item.size}
+                {filteredItems.map(item => <Item key={item.id} title={item.title} color={item.color} size={item.size}
                                                     price={item.price} description={item.description}/>)}
             </ItemsBlock>
         </StyledApp>
@@ -129,16 +137,21 @@ const StyledApp = styled.div`
 const StyledFilter = styled.div`
   display: flex;
   margin-bottom: 20px;
+  align-items: center;
 `
-
-const StyledFilterItem = styled.div``
-
-const StyledFilterInput = styled.input.attrs(() => ({
-    type: "checkbox"
-}))``
 
 const ItemsBlock = styled.div`
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+`
+
+const StyledInput = styled.input.attrs(({type}) => ({
+    type: 'number'
+}))`
+  height: 30px;
+  border-radius: 5px;
+  border: none;
+  margin-left: 5px;
+  padding: 2px;
 `

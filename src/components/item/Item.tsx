@@ -25,8 +25,8 @@ const StyledItem = styled.div`
   width: 150px;
   min-height: 250px;
   flex-grow: 1;
-  background-color: #353535;
-  color: white;
+  background-color: #557A95;
+  color: #B1A296;
   padding: 20px;
   position: relative;
 `
