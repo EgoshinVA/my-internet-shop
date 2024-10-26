@@ -68,22 +68,34 @@ function App() {
     const [currentColors, setCurrentColors] = useState<string[]>([])
 
     const [minPrice, setMinPrice] = useState<number>()
-
     const [maxPrice, setMaxPrice] = useState<number>()
 
-    if (minPrice === 0) setMinPrice(undefined)
+    const [minSize, setMinSize] = useState<number>()
+    const [maxSize, setMaxSize] = useState<number>()
 
+    if (minPrice === 0) setMinPrice(undefined)
     if (maxPrice === 0) setMaxPrice(undefined)
+    if (minSize === 0) setMinSize(undefined)
+    if (maxSize === 0) setMaxSize(undefined)
+
+
 
     let filteredItems = items
 
     const onMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
         setMinPrice(Number(event.currentTarget.value))
-
     }
 
     const onMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
         setMaxPrice(Number(event.currentTarget.value))
+    }
+
+    const onMinSizeChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setMinSize(Number(event.currentTarget.value))
+    }
+
+    const onMaxSizeChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setMaxSize(Number(event.currentTarget.value))
     }
 
     const colors = ["white", "black", "grey", "brown", "blue", "red", "green", "yellow"]
@@ -95,6 +107,8 @@ function App() {
     if (currentColors.length > 0) filteredItems = items.filter(item => currentColors.includes(item.color))
     if (minPrice) filteredItems = filteredItems.filter(item => item.price >= minPrice)
     if (maxPrice) filteredItems = filteredItems.filter(item => item.price <= maxPrice)
+    if (minSize) filteredItems = filteredItems.filter(item => item.size >= minSize)
+    if (maxSize) filteredItems = filteredItems.filter(item => item.size <= maxSize)
 
     return (
         <StyledApp>
@@ -118,13 +132,20 @@ function App() {
                         ))}
                     </Select>
                 </FormControl>
-                <p>Цена:</p>
-                <StyledInput placeholder={'От:'} value={minPrice} onChange={onMinPriceChange}/>
-                <StyledInput placeholder={'До:'} value={maxPrice} onChange={onMaxPriceChange}/>
+                <FilterBlock>
+                    <p>Цена:</p>
+                    <StyledInput placeholder={'От:'} value={minPrice} onChange={onMinPriceChange}/>
+                    <StyledInput placeholder={'До:'} value={maxPrice} onChange={onMaxPriceChange}/>
+                </FilterBlock>
+                <FilterBlock>
+                    <p>Размер:</p>
+                    <StyledInput placeholder={'От:'} value={minSize} onChange={onMinSizeChange}/>
+                    <StyledInput placeholder={'До:'} value={maxSize} onChange={onMaxSizeChange}/>
+                </FilterBlock>
             </StyledFilter>
             <ItemsBlock>
                 {filteredItems.map(item => <Item key={item.id} title={item.title} color={item.color} size={item.size}
-                                                    price={item.price} description={item.description}/>)}
+                                                 price={item.price} description={item.description}/>)}
             </ItemsBlock>
         </StyledApp>
     );
@@ -146,6 +167,15 @@ const ItemsBlock = styled.div`
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+`
+
+const FilterBlock = styled.div`
+  display: flex;
+  border: 1px solid #48474b;
+  padding: 12.5px;
+  border-radius: 5px;
+  align-items: center;
+  margin-right: 5px;
 `
 
 const StyledInput = styled.input.attrs(({type}) => ({

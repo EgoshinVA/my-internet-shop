@@ -14,6 +14,7 @@ export const Item: React.FC<ItemPropsType> = (props) => {
         <StyledItem>
             <StyledName>{props.title}</StyledName>
             <StyledDescription>{props.description}</StyledDescription>
+            <Size>Size: {props.size}</Size>
             <StyledColor color={props.color}></StyledColor>
             <Price>{props.price}P</Price>
         </StyledItem>
@@ -46,6 +47,11 @@ const StyledColor = styled.div`
   height: 15px;
   border-radius: 5px;
   background-color: ${props => props.color || 'white'};
+`
+
+const Size = styled.p`
+  margin-top: 10px;
+  margin-bottom: 20px;
 `
 
 const Price = styled.p`
