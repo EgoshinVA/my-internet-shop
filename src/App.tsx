@@ -79,7 +79,7 @@ function App() {
 
     const onMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
         setMinPrice(Number(event.currentTarget.value))
-        if (minPrice) setItems(filteredItems.filter(item => item.price > minPrice))
+
     }
 
     const onMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +93,8 @@ function App() {
     };
 
     if (currentColors.length > 0) filteredItems = items.filter(item => currentColors.includes(item.color))
+    if (minPrice) filteredItems = filteredItems.filter(item => item.price >= minPrice)
+    if (maxPrice) filteredItems = filteredItems.filter(item => item.price <= maxPrice)
 
     return (
         <StyledApp>
