@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {Item} from "./components/item/Item";
 import {v1} from "uuid";
 import {Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select} from "@mui/material";
+import {Selector} from "./components/selector/Selector";
 
 export type ItemType = {
     id: string
@@ -11,6 +12,11 @@ export type ItemType = {
     description: string
     price: number
     size: number
+}
+
+export type ColorType = {
+    value: string
+    color: string
 }
 
 function App() {
@@ -64,8 +70,16 @@ function App() {
             size: 45
         },
     ])
+    const [value, setValue] = useState<string>('');
 
-    const [currentColors, setCurrentColors] = useState<string[]>([])
+    const ColorsValues: ColorType[] = [
+        {value: '', color: 'all'},
+        {value: '1', color: 'red'},
+        {value: '2', color: 'yellow'},
+        {value: '3', color: 'white'},
+        {value: '4', color: 'black'},
+        {value: '5', color: 'green'},
+    ]
 
     const [minPrice, setMinPrice] = useState<number>()
     const [maxPrice, setMaxPrice] = useState<number>()
@@ -77,8 +91,6 @@ function App() {
     if (maxPrice === 0) setMaxPrice(undefined)
     if (minSize === 0) setMinSize(undefined)
     if (maxSize === 0) setMaxSize(undefined)
-
-
 
     let filteredItems = items
 
@@ -98,40 +110,17 @@ function App() {
         setMaxSize(Number(event.currentTarget.value))
     }
 
-    const colors = ["white", "black", "grey", "brown", "blue", "red", "green", "yellow"]
-
-    const handleChange = (event: any) => {
-        setCurrentColors(event.target.value)
-    };
-
-    if (currentColors.length > 0) filteredItems = items.filter(item => currentColors.includes(item.color))
     if (minPrice) filteredItems = filteredItems.filter(item => item.price >= minPrice)
     if (maxPrice) filteredItems = filteredItems.filter(item => item.price <= maxPrice)
     if (minSize) filteredItems = filteredItems.filter(item => item.size >= minSize)
     if (maxSize) filteredItems = filteredItems.filter(item => item.size <= maxSize)
+    const selectedValue = ColorsValues.find(item => item.value === value)
+    if (value && selectedValue) filteredItems = filteredItems.filter(item => item.color === selectedValue.color)
 
     return (
         <StyledApp>
             <StyledFilter>
-                <FormControl sx={{m: 1, width: 300}}>
-                    <InputLabel>Tag</InputLabel>
-                    <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        value={currentColors}
-                        onChange={handleChange}
-                        input={<OutlinedInput label="Tag"/>}
-                        renderValue={(selected) => selected.join(', ')}
-                    >
-                        {colors.map((color) => (
-                            <MenuItem key={color} value={color}>
-                                <Checkbox checked={currentColors.indexOf(color) > -1}/>
-                                <ListItemText primary={color}/>
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                <Selector value={value} items={ColorsValues} onChange={setValue}/>
                 <FilterBlock>
                     <p>Цена:</p>
                     <StyledInput placeholder={'От:'} value={minPrice} onChange={onMinPriceChange}/>
@@ -154,36 +143,36 @@ function App() {
 export default App;
 
 const StyledApp = styled.div`
-  padding: 20px;
+    padding: 20px;
 `
 
 const StyledFilter = styled.div`
-  display: flex;
-  margin-bottom: 20px;
-  align-items: center;
+    display: flex;
+    margin-bottom: 20px;
+    align-items: center;
 `
 
 const ItemsBlock = styled.div`
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 `
 
 const FilterBlock = styled.div`
-  display: flex;
-  border: 1px solid #48474b;
-  padding: 12.5px;
-  border-radius: 5px;
-  align-items: center;
-  margin-right: 5px;
+    display: flex;
+    border: 1px solid #48474b;
+    padding: 12.5px;
+    border-radius: 5px;
+    align-items: center;
+    margin-right: 5px;
 `
 
 const StyledInput = styled.input.attrs(({type}) => ({
     type: 'number'
 }))`
-  height: 30px;
-  border-radius: 5px;
-  border: none;
-  margin-left: 5px;
-  padding: 2px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    margin-left: 5px;
+    padding: 2px 6px;
 `

@@ -1,0 +1,45 @@
+.selector {
+    background-color: #919191;
+    padding: 5px 15px;
+    border-radius: 5px;
+    width: 200px;
+    position: relative;
+}
+
+.title {
+    display: inline-block;
+    margin: 0;
+    font-weight: bold;
+    font-size: 22px;
+    min-height: 20px;
+    min-width: 100%;
+    cursor: pointer;
+}
+
+.itemsBlock {
+    margin: 5px 0;
+    position:absolute;
+    z-index: 999;
+}
+
+.item {
+    background-color: #505050;
+    border-radius: 5px;
+    padding: 0 5px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    color: #dcdcdc;
+}
+
+.selectedItem {
+    background-color: #262626;
+    border-radius: 5px;
+    padding: 0 5px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    color: #dcdcdc;
+}
+
+.item:hover {
+    background-color: #262626;
+}
