@@ -29,6 +29,7 @@ type ChangeNumberAction = {
     number: number
 }
 type ActionType = ChangeItemsAction | ChangeValueAction | ChangeNumberAction
+
 export const reducer = (state: StateType, action: ActionType): StateType => {
     switch (action.type) {
         case CHANGE_ITEMS:
