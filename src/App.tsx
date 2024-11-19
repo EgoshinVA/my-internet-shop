@@ -1,9 +1,9 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useReducer} from 'react';
 import styled from "styled-components";
 import {Item} from "./components/item/Item";
 import {v1} from "uuid";
-import {Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select} from "@mui/material";
 import {Selector} from "./components/selector/Selector";
+import {reducer, StateType} from "./Reducer";
 
 export type ItemType = {
     id: string
@@ -19,8 +19,15 @@ export type ColorType = {
     color: string
 }
 
-function App() {
-    const [items, setItems] = useState<ItemType[]>([
+export const CHANGE_ITEMS = 'CHANGE-ITEMS'
+export const CHANGE_VALUE = 'CHANGE-VALUE'
+export const CHANGE_MIN_PRICE = 'CHANGE-MIN-PRICE'
+export const CHANGE_MAX_PRICE = 'CHANGE-MAX-PRICE'
+export const CHANGE_MIN_SIZE = 'CHANGE-MIN-SIZE'
+export const CHANGE_MAX_SIZE = 'CHANGE-MAX-SIZE'
+
+const initialState: StateType = {
+    items: [
         {
             id: v1(),
             title: 'T-Shirt',
@@ -69,11 +76,19 @@ function App() {
             price: 500,
             size: 45
         },
-    ])
-    const [value, setValue] = useState<string>('');
+    ],
+    value: '0',
+    minPrice: 0,
+    maxPrice: 0,
+    minSize: 0,
+    maxSize: 0
+}
+
+function App() {
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     const ColorsValues: ColorType[] = [
-        {value: '', color: 'all'},
+        {value: '0', color: 'all'},
         {value: '1', color: 'red'},
         {value: '2', color: 'yellow'},
         {value: '3', color: 'white'},
@@ -81,55 +96,46 @@ function App() {
         {value: '5', color: 'green'},
     ]
 
-    const [minPrice, setMinPrice] = useState<number>()
-    const [maxPrice, setMaxPrice] = useState<number>()
-
-    const [minSize, setMinSize] = useState<number>()
-    const [maxSize, setMaxSize] = useState<number>()
-
-    if (minPrice === 0) setMinPrice(undefined)
-    if (maxPrice === 0) setMaxPrice(undefined)
-    if (minSize === 0) setMinSize(undefined)
-    if (maxSize === 0) setMaxSize(undefined)
-
-    let filteredItems = items
+    let filteredItems = state.items
 
     const onMinPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setMinPrice(Number(event.currentTarget.value))
+        dispatch({type: CHANGE_MIN_PRICE, number: Number(event.currentTarget.value)})
     }
 
     const onMaxPriceChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setMaxPrice(Number(event.currentTarget.value))
+        dispatch({type: CHANGE_MAX_PRICE, number: Number(event.currentTarget.value)})
+        debugger
     }
 
     const onMinSizeChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setMinSize(Number(event.currentTarget.value))
+        dispatch({type: CHANGE_MIN_SIZE, number: Number(event.currentTarget.value)})
     }
 
     const onMaxSizeChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setMaxSize(Number(event.currentTarget.value))
+        dispatch({type: CHANGE_MAX_SIZE, number: Number(event.currentTarget.value)})
     }
 
-    if (minPrice) filteredItems = filteredItems.filter(item => item.price >= minPrice)
-    if (maxPrice) filteredItems = filteredItems.filter(item => item.price <= maxPrice)
-    if (minSize) filteredItems = filteredItems.filter(item => item.size >= minSize)
-    if (maxSize) filteredItems = filteredItems.filter(item => item.size <= maxSize)
-    const selectedValue = ColorsValues.find(item => item.value === value)
-    if (value && selectedValue) filteredItems = filteredItems.filter(item => item.color === selectedValue.color)
+    if (state.minPrice > 0) filteredItems = filteredItems.filter(item => item.price >= state.minPrice)
+    if (state.maxPrice > 0) filteredItems = filteredItems.filter(item => item.price <= state.maxPrice)
+    if (state.minSize > 0) filteredItems = filteredItems.filter(item => item.size >= state.minSize)
+    if (state.maxSize > 0) filteredItems = filteredItems.filter(item => item.size <= state.maxSize)
+    const selectedValue = ColorsValues.find(item => item.value === state.value)
+    if (state.value !== '0' && selectedValue) filteredItems = filteredItems.filter(item => item.color === selectedValue.color)
 
     return (
         <StyledApp>
             <StyledFilter>
-                <Selector value={value} items={ColorsValues} onChange={setValue}/>
+                <Selector value={state.value} items={ColorsValues}
+                          onChange={(value: string) => dispatch({type: CHANGE_VALUE, value})}/>
                 <FilterBlock>
                     <p>Цена:</p>
-                    <StyledInput placeholder={'От:'} value={minPrice} onChange={onMinPriceChange}/>
-                    <StyledInput placeholder={'До:'} value={maxPrice} onChange={onMaxPriceChange}/>
+                    <StyledInput placeholder={'От:'} value={state.minPrice} onChange={onMinPriceChange}/>
+                    <StyledInput placeholder={'До:'} value={state.maxPrice} onChange={onMaxPriceChange}/>
                 </FilterBlock>
                 <FilterBlock>
                     <p>Размер:</p>
-                    <StyledInput placeholder={'От:'} value={minSize} onChange={onMinSizeChange}/>
-                    <StyledInput placeholder={'До:'} value={maxSize} onChange={onMaxSizeChange}/>
+                    <StyledInput placeholder={'От:'} value={state.minSize} onChange={onMinSizeChange}/>
+                    <StyledInput placeholder={'До:'} value={state.maxSize} onChange={onMaxSizeChange}/>
                 </FilterBlock>
             </StyledFilter>
             <ItemsBlock>

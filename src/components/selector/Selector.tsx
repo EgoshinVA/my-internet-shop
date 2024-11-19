@@ -1,18 +1,23 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ColorType} from "../../App";
 import styles from './Selector.module.css'
 
 type SelectorPropsType = {
-    value?: string
+    value: string
     items: ColorType[]
     onChange: (value: string) => void
 }
 
 export const Selector: React.FC<SelectorPropsType> = (props) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [hovered, setHovered] = useState<string>(props.value);
 
     const selectedValue = props.items.find(el => el.value === props.value)
-    const hoveredValue = props.items.find(el => el.value === props.value)
+    const hoveredValue = props.items.find(el => el.value === hovered)
+
+    useEffect(() => {
+        setHovered(props.value);
+    }, [props.value])
 
     const onClickToggle = () => {
         setIsOpen(!isOpen);
@@ -27,11 +32,11 @@ export const Selector: React.FC<SelectorPropsType> = (props) => {
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         for (let i = 0; i < props.items.length; i++) {
-            if (props.items[i].value === props.value && e.key === 'ArrowDown' && props.items[i + 1]) {
+            if (props.items[i].value === hovered && e.key === 'ArrowDown' && props.items[i + 1]) {
                 props.onChange(props.items[i + 1].value);
                 break;
             }
-            if (props.items[i].value === props.value && e.key === 'ArrowUp' && props.items[i - 1]) {
+            if (props.items[i].value === hovered && e.key === 'ArrowUp' && props.items[i - 1]) {
                 props.onChange(props.items[i - 1].value);
                 break;
             }
@@ -50,7 +55,9 @@ export const Selector: React.FC<SelectorPropsType> = (props) => {
                     {props.items.map(item => <div
                         className={hoveredValue?.value === item.value ? styles.selectedItem : styles.item}
                         onClick={() => changeValue(item.value)}
-                        key={item.value}>{item.color}</div>
+                        key={item.value}
+                        onMouseEnter={() => setHovered(item.value)}
+                        >{item.color}</div>
                     )}
                 </div>
                 }
